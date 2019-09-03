@@ -74,3 +74,10 @@ export function setPic(params) {
     params
   })
 }
+export function orderList(data) {
+  return request({
+    url: 'AdOrder/orderList',
+    method: 'post',
+    data
+  })
+}

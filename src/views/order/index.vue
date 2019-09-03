@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { getWorkerList } from '@/api/system'
+import { orderList } from '@/api/system'
 export default {
   data() {
     return {
@@ -89,7 +89,7 @@ export default {
     getList(page = 1) {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          getWorkerList({
+          orderList({
             ...this.form,
             page,
             size: 10

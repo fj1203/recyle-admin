@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card class="box-card">
     <el-form ref="form" :model="form" label-width="110px" label-position="left" :rules="rules">
       <el-row :gutter="20">
         <el-col :span="8">
@@ -21,7 +21,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="getList()">查询</el-button>
+            <el-button type="primary" @click="getList()">查询</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -49,13 +49,8 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="primary"
-            @click="info(scope.row)"
-          >查看</el-button>
-          <el-button
-            size="mini"
             type="danger"
-            @click="handleDelete(scope.row.id)"
+            @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -67,35 +62,14 @@
       :total="page.total"
       @size-change="getList"
     />
-    <el-dialog title="用户信息" :visible.sync="dialog">
-      <el-form>
-        <el-form-item label="名称">
-          {{ formDialog.name }}
-        </el-form-item>
-        <el-form-item label="电话">
-          {{ formDialog.phone }}
-        </el-form-item>
-        <el-form-item label="重量">
-          {{ formDialog.allNum }}kg
-        </el-form-item>
-        <el-form-item label="创建时间">
-          {{ formDialog.createTime | dateFormat }}
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialog = false">取 消</el-button>
-        <el-button type="primary" @click="dialog = false">确 定</el-button>
-      </div>
-    </el-dialog>
   </el-card>
 </template>
 
 <script>
-import { getUserList, delUser } from '@/api/system'
+import { getWorkerList } from '@/api/system'
 export default {
   data() {
     return {
-      dialog: false,
       form: {
         sortParam: '1',
         sort: '1'
@@ -108,18 +82,14 @@ export default {
       rules: {
         sortParam: { required: true, message: '请选择排序方式' },
         sort: { required: true, message: '请选正序或者降序' }
-      },
-      formDialog: ''
+      }
     }
-  },
-  mounted() {
-    this.getList()
   },
   methods: {
     getList(page = 1) {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          getUserList({
+          getWorkerList({
             ...this.form,
             page,
             size: 10
@@ -132,27 +102,6 @@ export default {
           return false
         }
       })
-    },
-    handleDelete(id) {
-      console.log(id)
-      this.$confirm('确认删除吗,相关订单也会删除', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        delUser({
-          id
-        }).then(res => {
-          this.$Message.success('删除成功')
-          this.getList()
-        }).catch(() => {
-          console.log('cancel')
-        })
-      })
-    },
-    info(item) {
-      this.dialog = true
-      this.formDialog = item
     }
   }
 }

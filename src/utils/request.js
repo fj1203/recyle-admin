@@ -3,7 +3,7 @@ import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 import Qs from 'qs'
-const whiteList = ['dic/uploadFace']
+const whiteList = ['dic/uploadFace', 'AdOrder/count']
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
   // withCredentials: true, // send cookies when cross-domain requests

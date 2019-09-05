@@ -5,19 +5,20 @@
         <el-form-item label="轮播图" label-width="120px">
           <el-upload
             list-type="picture-card"
-            action="customize"
+            action="/apis/dic/uploadFace"
             :show-file-list="true"
             :on-remove="remove"
-            :http-request="upload"
+            :on-success="success"
             :file-list="fileList"
             :auto-upload="true"
+            :limit="4"
           >
             <!-- <img v-for="(item,index) in imageArr" :key="index" :src="imageArr" class="avatar"> -->
             <i class="el-icon-plus" />
           </el-upload>
         </el-form-item>
       </el-form>
-      <div class="text-right"><el-button type="primary">提交</el-button></div>
+      <div class="text-right"><el-button type="primary" @click="setPic">提交</el-button></div>
     </el-card>
     <el-card class="sys-item">
       <el-row>
@@ -46,7 +47,7 @@
   </el-card>
 </template>
 <script>
-import { uploadFace, getPrice, setPrice, getContent, setContent } from '@/api/system'
+import { getPic, getPrice, setPrice, getContent, setContent, delPic } from '@/api/system'
 export default {
   data() {
     return {
@@ -58,22 +59,33 @@ export default {
   created() {
     this.getPrice()
     this.getContent()
+    this.getPic()
   },
   methods: {
-    upload(data) {
-      console.log(data)
-      const _file = data.file
-      var formData = new FormData()
-      formData.append('files', _file)
-      console.log(_file)
-      uploadFace(formData).then(res => {
-        // this.imageUrl = 'http://123.207.86.66:6784' + res.data.data
-        // this.fileList.push(`http://www.wwwruiqilinmuyinghuli.cn${res.data.data}`)
-        console.log(this.fileList)
-      })
-    },
+    // upload(data) {
+    //   console.log(data)
+    //   const _file = data.file
+    //   var formData = new FormData()
+    //   formData.append('files', _file)
+    //   console.log(_file)
+    //   uploadFace(formData).then(res => {
+    //     // this.imageUrl = 'http://123.207.86.66:6784' + res.data.data
+    //     // this.fileList.push(`http://www.wwwruiqilinmuyinghuli.cn${res.data.data}`)
+    //     console.log(this.fileList)
+    //   })
+    // },
     remove(file, fileList) {
+      console.log(file)
       console.log(fileList)
+    },
+    success(res, file, fileList) {
+      console.log('file', file)
+      console.log('fileList', fileList)
+      this.fileList = fileList.push({
+        name: '1',
+        url: 'http://www.wwwruiqilinmuyinghuli.cn' + file.response.data
+      })
+      console.log(this.fileList)
     },
     getPrice() {
       getPrice().then(res => {
@@ -108,6 +120,23 @@ export default {
       }).catch(() => {
         console.log('cancel')
       })
+    },
+    getPic() {
+      getPic().then(res => {
+        const a = res.data.filter(item => item.value).map(item => {
+          return {
+            name: item.id,
+            url: 'http://www.wwwruiqilinmuyinghuli.cn' + item.value
+          }
+        })
+        console.log(a)
+        this.fileList = a
+      }).catch(() => {
+        console.log('cancel')
+      })
+    },
+    setPic() {
+      console.log(this.fileList)
     }
   }
 }

@@ -81,3 +81,38 @@ export function orderList(data) {
     data
   })
 }
+export function delWorker(params) {
+  return request({
+    url: 'AdUser/delWorker',
+    method: 'get',
+    params
+  })
+}
+export function cancelOrderByAdmin(data) {
+  return request({
+    url: 'AdOrder/cancelOrderByAdmin',
+    method: 'post',
+    data
+  })
+}
+export function delPic(params) {
+  return request({
+    url: 'dic/delPic',
+    method: 'get',
+    params
+  })
+}
+export function changeWorker(params) {
+  return request({
+    url: 'AdUser/changeWorker',
+    method: 'get',
+    params
+  })
+}
+export function count(data) {
+  return request({
+    url: 'AdOrder/count',
+    method: 'post',
+    data
+  })
+}

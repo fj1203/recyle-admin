@@ -1,6 +1,4 @@
-import Vue from 'vue'
-Vue.filter('dateFormat', (val, fmt) => val ? dateFormat(val, fmt) : '')
-const dateFormat = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
+export const dateFormat = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
   if (date) date = (date instanceof Date) ? date : new Date(date)
   else return ''
   const o = {
@@ -22,20 +20,17 @@ const dateFormat = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
   })
   return fmt
 }
-Vue.filter('STATE', (val) => {
-  const state = {
-    '1': '待接单',
-    '2': '已接单',
-    '4': '已完成',
-    '5': '已取消',
-    '6': '系统取消'
+export const addDate = (date, days) => {
+  var d = new Date(date)
+  d.setDate(d.getDate() + days)
+  var month = d.getMonth() + 1
+  var day = d.getDate()
+  if (month < 10) {
+    month = '0' + month
   }
-  return state[val]
-})
-Vue.filter('WORDERSTATUS', (val) => {
-  const state = {
-    '1': '已审核',
-    '2': '待审核'
+  if (day < 10) {
+    day = '0' + day
   }
-  return state[val]
-})
+  var val = d.getFullYear() + '/' + month + '/' + day
+  return val
+}

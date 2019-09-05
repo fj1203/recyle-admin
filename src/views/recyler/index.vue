@@ -33,16 +33,19 @@
       <el-table-column
         prop="name"
         label="名字"
-        width="180"
       />
       <el-table-column
         prop="phone"
         label="电话"
-        width="180"
       />
-      <el-table-column label="重量">
+      <el-table-column label="状态">
         <template slot-scope="scope">
-          {{ scope.row.allNum }} (kg)
+          <el-tag :type="scope.row.deleted == '1' ? 'success' : 'danger'"> {{ scope.row.deleted | WORDERSTATUS }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间">
+        <template slot-scope="scope">
+          {{ scope.row.createTime | dateFormat }}
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -50,8 +53,14 @@
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
+            @click="handleDelete(scope.row.id)"
           >删除</el-button>
+          <el-button
+            v-if="scope.row.deleted == '2'"
+            size="mini"
+            type="primary"
+            @click="changeWorker(scope.row.id)"
+          >审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -60,19 +69,20 @@
       background
       layout="prev, pager, next"
       :total="page.total"
-      @size-change="getList"
+      :page-size="10"
+      @current-change="getList"
     />
   </el-card>
 </template>
 
 <script>
-import { getWorkerList } from '@/api/system'
+import { getWorkerList, delWorker, changeWorker } from '@/api/system'
 export default {
   data() {
     return {
       form: {
-        sortParam: '1',
-        sort: '1'
+        sortParam: '',
+        sort: ''
       },
       list: [],
       page: {
@@ -80,8 +90,8 @@ export default {
         page: 1
       },
       rules: {
-        sortParam: { required: true, message: '请选择排序方式' },
-        sort: { required: true, message: '请选正序或者降序' }
+        // sortParam: { required: true, message: '请选择排序方式' },
+        // sort: { required: true, message: '请选正序或者降序' }
       }
     }
   },
@@ -104,6 +114,33 @@ export default {
         } else {
           return false
         }
+      })
+    },
+    handleDelete(id) {
+      this.$confirm('确认删除吗,只是禁止回收员登录', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        delWorker({
+          id
+        }).then(res => {
+          this.$Message.success('删除成功')
+          this.getList()
+        }).catch(() => {
+          console.log('cancel')
+        })
+      })
+    },
+    changeWorker(id) {
+      const that = this
+      changeWorker({
+        id
+      }).then(res => {
+        that.$Message.success('审核成功')
+        that.getList()
+      }).catch(() => {
+        console.log('cancel')
       })
     }
   }

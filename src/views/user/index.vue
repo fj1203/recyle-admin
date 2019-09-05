@@ -31,14 +31,12 @@
       style="width: 100%"
     >
       <el-table-column
-        prop="name"
+        prop="nickname"
         label="名字"
-        width="180"
       />
       <el-table-column
         prop="phone"
         label="电话"
-        width="180"
       />
       <el-table-column label="重量">
         <template slot-scope="scope">
@@ -65,12 +63,16 @@
       background
       layout="prev, pager, next"
       :total="page.total"
-      @size-change="getList"
+      :page-size="10"
+      @current-change="getList"
     />
     <el-dialog title="用户信息" :visible.sync="dialog">
-      <el-form>
+      <el-form label-position="left" label-width="80px">
+        <el-form-item label="头像">
+          <img width="50px" :src="formDialog.headUrl" alt="">
+        </el-form-item>
         <el-form-item label="名称">
-          {{ formDialog.name }}
+          {{ formDialog.nickname }}
         </el-form-item>
         <el-form-item label="电话">
           {{ formDialog.phone }}
@@ -97,8 +99,8 @@ export default {
     return {
       dialog: false,
       form: {
-        sortParam: '1',
-        sort: '1'
+        sortParam: '',
+        sort: ''
       },
       list: [],
       page: {
@@ -106,8 +108,8 @@ export default {
         page: 1
       },
       rules: {
-        sortParam: { required: true, message: '请选择排序方式' },
-        sort: { required: true, message: '请选正序或者降序' }
+        // sortParam: { required: true, message: '请选择排序方式' },
+        // sort: { required: true, message: '请选正序或者降序' }
       },
       formDialog: ''
     }
@@ -135,6 +137,7 @@ export default {
     },
     handleDelete(id) {
       console.log(id)
+      const that = this
       this.$confirm('确认删除吗,相关订单也会删除', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -143,8 +146,8 @@ export default {
         delUser({
           id
         }).then(res => {
-          this.$Message.success('删除成功')
-          this.getList()
+          that.$Message.success('删除成功')
+          that.getList()
         }).catch(() => {
           console.log('cancel')
         })

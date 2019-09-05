@@ -9,6 +9,7 @@
             :show-file-list="true"
             :on-remove="remove"
             :on-success="success"
+            :on-exceed="exceed"
             :file-list="fileList"
             :auto-upload="true"
             :limit="4"
@@ -18,7 +19,9 @@
           </el-upload>
         </el-form-item>
       </el-form>
-      <div class="text-right"><el-button type="primary" @click="setPic">提交</el-button></div>
+      <div class="text-right">
+        <el-button type="primary" @click="setPic">提交</el-button>
+      </div>
     </el-card>
     <el-card class="sys-item">
       <el-row>
@@ -30,7 +33,9 @@
           </el-form>
         </el-col>
       </el-row>
-      <div class="text-right"><el-button type="primary" @click="setPrice">提交</el-button></div>
+      <div class="text-right">
+        <el-button type="primary" @click="setPrice">提交</el-button>
+      </div>
     </el-card>
     <el-card class="sys-item">
       <el-row>
@@ -42,24 +47,35 @@
           </el-form>
         </el-col>
       </el-row>
-      <div class="text-right"><el-button type="primary" @click="setContent">提交</el-button></div>
+      <div class="text-right">
+        <el-button type="primary" @click="setContent">提交</el-button>
+      </div>
     </el-card>
   </el-card>
 </template>
 <script>
-import { getPic, getPrice, setPrice, getContent, setContent, delPic } from '@/api/system'
+import {
+  getPic,
+  setPic,
+  getPrice,
+  setPrice,
+  getContent,
+  setContent,
+  delPic
+} from "@/api/system";
 export default {
   data() {
     return {
       fileList: [],
-      price: '',
-      content: ''
-    }
+      price: "",
+      content: "",
+      sendfilelist: []
+    };
   },
   created() {
-    this.getPrice()
-    this.getContent()
-    this.getPic()
+    this.getPrice();
+    this.getContent();
+    this.getPic();
   },
   methods: {
     // upload(data) {
@@ -75,71 +91,100 @@ export default {
     //   })
     // },
     remove(file, fileList) {
-      console.log(file)
-      console.log(fileList)
+      let temp = [];
+      temp = this.sendfilelist.filter(item => item.uid !== file.uid);
+      console.log("得到剔除了该图片的总列表", temp);
     },
     success(res, file, fileList) {
-      console.log('file', file)
-      console.log('fileList', fileList)
-      this.fileList = fileList.push({
-        name: '1',
-        url: 'http://www.wwwruiqilinmuyinghuli.cn' + file.response.data
-      })
-      console.log(this.fileList)
+      console.log("file", file);
+      console.log("fileList", fileList);
+      if (this.sendfilelist.length === 0) {
+        this.sendfilelist = fileList.map((item, index) => {
+          return {
+            id: index + 4,
+            uid: item.uid,
+            url: item.response.data
+          };
+        });
+      }else{
+
+      }
+    },
+    exceed() {
+      this.$message({ type: "error", message: "只允许上传4张照片" });
     },
     getPrice() {
-      getPrice().then(res => {
-        this.price = res.data
-      }).catch(() => {
-        console.log('cancel')
-      })
+      getPrice()
+        .then(res => {
+          this.price = res.data;
+        })
+        .catch(() => {
+          console.log("cancel");
+        });
     },
     getContent() {
-      getContent().then(res => {
-        this.content = res.data
-      }).catch(() => {
-        console.log('cancel')
-      })
+      getContent()
+        .then(res => {
+          this.content = res.data;
+        })
+        .catch(() => {
+          console.log("cancel");
+        });
     },
     setPrice() {
-      setPrice({ price: this.price }).then(res => {
-        this.$message({
-          message: '提交成功',
-          type: 'success'
+      setPrice({ price: this.price })
+        .then(res => {
+          this.$message({
+            message: "提交成功",
+            type: "success"
+          });
         })
-      }).catch(() => {
-        console.log('cancel')
-      })
+        .catch(() => {
+          console.log("cancel");
+        });
     },
     setContent() {
-      setContent({ content: this.content }).then(res => {
-        this.$message({
-          message: '提交成功',
-          type: 'success'
+      setContent({ content: this.content })
+        .then(res => {
+          this.$message({
+            message: "提交成功",
+            type: "success"
+          });
         })
-      }).catch(() => {
-        console.log('cancel')
-      })
+        .catch(() => {
+          console.log("cancel");
+        });
     },
     getPic() {
-      getPic().then(res => {
-        const a = res.data.filter(item => item.value).map(item => {
-          return {
-            name: item.id,
-            url: 'http://www.wwwruiqilinmuyinghuli.cn' + item.value
-          }
+      getPic()
+        .then(res => {
+          const a = res.data
+            .filter(item => item.value)
+            .map(item => {
+              return {
+                name: item.id,
+                url: "http://www.wwwruiqilinmuyinghuli.cn" + item.value
+              };
+            });
+          console.log(a);
+          this.fileList = a;
         })
-        console.log(a)
-        this.fileList = a
-      }).catch(() => {
-        console.log('cancel')
-      })
+        .catch(() => {
+          console.log("cancel");
+        });
     },
     setPic() {
-      console.log(this.fileList)
+      console.log(this.fileList);
+      this.sendfilelist.forEach((item, index) => {
+        setPic({ picId: item.id, fileUrl: item.url })
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {});
+      });
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .avatar-uploader .el-upload:hover {
@@ -153,10 +198,10 @@ export default {
   line-height: 178px;
   text-align: center;
 }
-.text-right{
+.text-right {
   text-align: right;
 }
-.sys-item{
+.sys-item {
   margin-bottom: 20px;
 }
 </style>

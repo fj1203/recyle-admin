@@ -1,9 +1,10 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <div :id="id" :class="className" :style="{height:height,width:width}" />
 </template>
 
 <script>
 import echarts from 'echarts'
+require('echarts/theme/macarons')
 export default {
   props: {
     className: {
@@ -25,6 +26,10 @@ export default {
     chartData: {
       type: Object,
       required: true
+    },
+    id: {
+      type: String,
+      default: 'chartLine'
     }
   },
   data() {
@@ -55,7 +60,8 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
-      this.setOptions(this.chartData)
+      // this.setOptions(this.chartData)
+      // this.chart = echarts.init(document.getElementById(this.id))
     },
     setOptions({ xData, line1, line2 } = {}) {
       this.chart.setOption({
@@ -66,11 +72,24 @@ export default {
             show: false
           }
         },
+        title: {
+          text: '收益统计',
+          x: '20',
+          top: '15',
+          textStyle: {
+            color: '#34bfa3',
+            fontSize: '16'
+          },
+          subtextStyle: {
+            color: '#90979c',
+            fontSize: '16'
+          }
+        },
         grid: {
-          left: 10,
-          right: 10,
-          bottom: 20,
-          top: 30,
+          left: '9%',
+          right: '9%',
+          bottom: 40,
+          top: 50,
           containLabel: true
         },
         tooltip: {

@@ -6,9 +6,8 @@
 
 <script>
 import echarts from 'echarts'
-
+require('echarts/theme/macarons')
 export default {
-  name: 'Dashboard',
   props: {
     className: {
       type: String,
@@ -36,8 +35,6 @@ export default {
       chart: ''
     }
   },
-  computed: {
-  },
   watch: {
     chartData: {
       deep: true,
@@ -47,7 +44,16 @@ export default {
     }
   },
   mounted() {
-    this.initChart()
+    this.$nextTick(() => {
+      this.initChart()
+    })
+  },
+  beforeDestroy() {
+    if (!this.chart) {
+      return
+    }
+    this.chart.dispose()
+    this.chart = null
   },
   methods: {
     initChart() {
@@ -55,14 +61,13 @@ export default {
     },
     setOptions({ xData, barData, lineData }) {
       this.chart.setOption({
-        backgroundColor: '#344b58',
         title: {
-          text: '回收员统计',
+          text: '回收员收益统计',
           x: '20',
           top: '15',
           textStyle: {
-            color: '#fff',
-            fontSize: '16'
+            color: '#34bfa3',
+            fontSize: '14'
           },
           subtextStyle: {
             color: '#90979c',
@@ -81,26 +86,21 @@ export default {
           left: '9%',
           right: '5%',
           borderWidth: 0,
-          top: 60,
+          top: 70,
           bottom: 30,
           textStyle: {
             color: '#fff'
           }
         },
         legend: {
-          x: '5%',
-          top: '10%',
-          textStyle: {
-            color: '#90979c'
-          },
-          data: ['female']
+          data: ['成交额', '单数']
         },
         calculable: true,
         xAxis: [{
           type: 'category',
           axisLine: {
             lineStyle: {
-              color: '#90979c'
+              color: '#36a3f7'
             }
           },
           splitLine: {
@@ -125,7 +125,7 @@ export default {
           },
           axisLine: {
             lineStyle: {
-              color: '#90979c'
+              color: '#36a3f7'
             }
           },
           axisTick: {
@@ -138,32 +138,6 @@ export default {
             show: false
           }
         }],
-        // dataZoom: [{
-        //   show: true,
-        //   height: 30,
-        //   xAxisIndex: [
-        //     0
-        //   ],
-        //   bottom: 30,
-        //   start: 10,
-        //   end: 80,
-        //   handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-        //   handleSize: '110%',
-        //   handleStyle: {
-        //     color: '#d3dee5'
-
-        //   },
-        //   textStyle: {
-        //     color: '#fff' },
-        //   borderColor: '#90979c'
-
-        // }, {
-        //   type: 'inside',
-        //   show: true,
-        //   height: 15,
-        //   start: 1,
-        //   end: 35
-        // }],
         series: [{
           name: '成交额',
           type: 'bar',

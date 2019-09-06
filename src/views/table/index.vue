@@ -54,28 +54,20 @@
   </el-card>
 </template>
 <script>
-import {
-  getPic,
-  setPic,
-  getPrice,
-  setPrice,
-  getContent,
-  setContent,
-  delPic
-} from "@/api/system";
+import { getPic, setPic, getPrice, setPrice, getContent, setContent, delPic } from '@/api/system'
 export default {
   data() {
     return {
       fileList: [],
-      price: "",
-      content: "",
+      price: '',
+      content: '',
       sendfilelist: []
-    };
+    }
   },
   created() {
-    this.getPrice();
-    this.getContent();
-    this.getPic();
+    this.getPrice()
+    this.getContent()
+    this.getPic()
   },
   methods: {
     // upload(data) {
@@ -91,69 +83,67 @@ export default {
     //   })
     // },
     remove(file, fileList) {
-      let temp = [];
-      temp = this.sendfilelist.filter(item => item.uid !== file.uid);
-      console.log("得到剔除了该图片的总列表", temp);
+      let temp = []
+      temp = this.sendfilelist.filter(item => item.uid !== file.uid)
+      console.log('得到剔除了该图片的总列表', temp)
     },
     success(res, file, fileList) {
-      console.log("file", file);
-      console.log("fileList", fileList);
+      console.log('file', file)
+      console.log('fileList', fileList)
       if (this.sendfilelist.length === 0) {
         this.sendfilelist = fileList.map((item, index) => {
           return {
             id: index + 4,
             uid: item.uid,
             url: item.response.data
-          };
-        });
-      }else{
-
+          }
+        })
       }
     },
     exceed() {
-      this.$message({ type: "error", message: "只允许上传4张照片" });
+      this.$message({ type: 'error', message: '只允许上传4张照片' })
     },
     getPrice() {
       getPrice()
         .then(res => {
-          this.price = res.data;
+          this.price = res.data
         })
         .catch(() => {
-          console.log("cancel");
-        });
+          console.log('cancel')
+        })
     },
     getContent() {
       getContent()
         .then(res => {
-          this.content = res.data;
+          this.content = res.data
         })
         .catch(() => {
-          console.log("cancel");
-        });
+          console.log('cancel')
+        })
     },
     setPrice() {
       setPrice({ price: this.price })
         .then(res => {
           this.$message({
-            message: "提交成功",
-            type: "success"
-          });
+            message: '提交成功',
+            type: 'success'
+          })
         })
         .catch(() => {
-          console.log("cancel");
-        });
+          console.log('cancel')
+        })
     },
     setContent() {
       setContent({ content: this.content })
         .then(res => {
           this.$message({
-            message: "提交成功",
-            type: "success"
-          });
+            message: '提交成功',
+            type: 'success'
+          })
         })
         .catch(() => {
-          console.log("cancel");
-        });
+          console.log('cancel')
+        })
     },
     getPic() {
       getPic()
@@ -163,28 +153,27 @@ export default {
             .map(item => {
               return {
                 name: item.id,
-                url: "http://www.wwwruiqilinmuyinghuli.cn" + item.value
-              };
-            });
-          console.log(a);
-          this.fileList = a;
+                url: 'http://www.wwwruiqilinmuyinghuli.cn' + item.value
+              }
+            })
+          console.log(a)
+          this.fileList = a
         })
         .catch(() => {
-          console.log("cancel");
-        });
+          console.log('cancel')
+        })
     },
     setPic() {
-      console.log(this.fileList);
+      console.log(this.fileList)
       this.sendfilelist.forEach((item, index) => {
         setPic({ picId: item.id, fileUrl: item.url })
           .then(res => {
-            console.log(res);
+            console.log(res)
           })
-          .catch(err => {});
-      });
+      })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .avatar-uploader .el-upload:hover {
